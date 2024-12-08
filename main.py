@@ -1,7 +1,5 @@
 import psycopg2
-# from psycopg2 import errors
 from datetime import datetime
-
 
 # Configuração da conexão com o banco
 DB_CONFIG = {
@@ -12,6 +10,7 @@ DB_CONFIG = {
     "port": 5433
 }
 
+# Exibição do banner ASCII ao iniciar o programa
 print("""                                
  _____       _   _         
 | __  |___ _| |_| |_ _ ___ 
@@ -21,7 +20,10 @@ print("""
 """)
 
 def connect_to_db():
-    """Conecta ao banco de dados usando as configurações definidas."""
+    """
+    Conecta ao banco de dados usando as configurações definidas em DB_CONFIG.
+    Retorna uma conexão ativa ou None caso haja falha.
+    """
     try:
         return psycopg2.connect(**DB_CONFIG)
     except psycopg2.Error as e:
@@ -30,14 +32,20 @@ def connect_to_db():
 
 # --- Validações de Entrada ---
 def validar_email(email):
-    """Valida o formato do email."""
+    """
+    Verifica se o formato do email é válido.
+    Retorna True se válido, senão retorna False.
+    """
     if "@" not in email or "." not in email.split("@")[-1]:
         print("Erro: O email informado não é válido.")
         return False
     return True
 
 def validar_data(data):
-    """Valida se a data está no formato YYYY-MM-DD."""
+    """
+    Valida se a data fornecida está no formato YYYY-MM-DD.
+    Retorna True se válido, senão retorna False.
+    """
     try:
         datetime.strptime(data, "%Y-%m-%d")
         return True
@@ -46,7 +54,10 @@ def validar_data(data):
         return False
 
 def validar_campo_vazio(valor, nome_campo):
-    """Verifica se um campo está vazio."""
+    """
+    Verifica se o valor de um campo obrigatório está vazio.
+    Retorna True se preenchido, senão retorna False.
+    """
     if not valor.strip():
         print(f"Erro: O campo '{nome_campo}' não pode estar vazio.")
         return False
@@ -54,7 +65,10 @@ def validar_campo_vazio(valor, nome_campo):
 
 # --- Funções de Usuário ---
 def cadastrar_usuario():
-    """Cadastra um novo usuário no sistema."""
+    """
+    Cadastra um novo usuário no sistema.
+    Solicita informações básicas do usuário e realiza validações antes de inserir no banco.
+    """
     email = input("Digite o email: ")
     if not validar_email(email):
         return
@@ -99,7 +113,10 @@ def cadastrar_usuario():
             conn.close()
 
 def pesquisar_todos_usuarios():
-    """Lista todos os usuários cadastrados no sistema."""
+    """
+    Lista todos os usuários cadastrados no sistema.
+    Exibe email e nome dos usuários.
+    """
     try:
         conn = connect_to_db()
         if not conn:
@@ -122,7 +139,10 @@ def pesquisar_todos_usuarios():
 
 # --- Funções de Grupo ---
 def criar_grupo():
-    """Cria um novo grupo no sistema."""
+    """
+    Cria um novo grupo no sistema.
+    Solicita informações básicas como código, nome e email do administrador.
+    """
     codigo_acesso = input("Digite o código de acesso do grupo: ")
     if not validar_campo_vazio(codigo_acesso, "código de acesso"):
         return
@@ -164,7 +184,10 @@ def criar_grupo():
             conn.close()
 
 def entrar_no_grupo():
-    """Adiciona um usuário a um grupo existente."""
+    """
+    Adiciona um usuário a um grupo existente.
+    Solicita o email do usuário e o código do grupo.
+    """
     email = input("Digite o email do usuário: ")
     if not validar_email(email):
         return
@@ -202,7 +225,10 @@ def entrar_no_grupo():
             conn.close()
 
 def pesquisar_todos_grupos():
-    """Lista todos os grupos cadastrados."""
+    """
+    Lista todos os grupos cadastrados.
+    Exibe o código de acesso e o nome do grupo.
+    """
     try:
         conn = connect_to_db()
         if not conn:
@@ -224,7 +250,9 @@ def pesquisar_todos_grupos():
             conn.close()
 
 def pesquisar_usuario_por_grupo():
-    """Lista todos os usuários de um grupo, buscando pelo nome do grupo."""
+    """
+    Lista todos os usuários de um grupo, buscando pelo nome do grupo.
+    """
     nome_grupo = input("Digite o nome do grupo: ")
     if not validar_campo_vazio(nome_grupo, "nome do grupo"):
         return
@@ -259,7 +287,9 @@ def pesquisar_usuario_por_grupo():
             conn.close()
 
 def usuarios_mais_ativos_por_grupo():
-    """Exibe os usuários com mais dias ativos em cada grupo."""
+    """
+    Exibe os usuários com mais dias ativos em cada grupo.
+    """
     try:
         conn = connect_to_db()
         if not conn:
@@ -304,7 +334,10 @@ def usuarios_mais_ativos_por_grupo():
 
 # --- Menu Principal ---
 def menu():
-    """Menu principal do sistema."""
+    """
+    Menu principal do sistema.
+    Exibe as opções e chama as funções correspondentes.
+    """
     while True:
         print("\nMenu do Sistema:")
         print("1. Cadastrar usuário")
@@ -313,7 +346,6 @@ def menu():
         print("4. Entrar no grupo")
         print("5. Pesquisar todos os grupos")
         print("6. Pesquisar usuários por grupo")
-        print('\nPesquisa utilizada na consulta.sql')
         print('7. Usuários mais ativos por grupo')
         print("\n8. Sair")
 
