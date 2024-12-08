@@ -1,0 +1,27 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_app
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+      - ./db/esquema.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/dados.sql:/docker-entrypoint-initdb.d/seed.sql
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin_app
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+
+volumes:
+  pg_data:
